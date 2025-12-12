@@ -40,7 +40,6 @@
             height: var(--nav-height);
             background: rgba(5, 5, 5, 0.95);
             backdrop-filter: blur(10px);
-            /* Solid subtle border instead of rainbow */
             border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
             z-index: 1000;
             display: flex;
@@ -62,10 +61,115 @@
             font-weight: bold;
             letter-spacing: 1px;
             transition: color 0.3s;
-            position: relative;
         }
 
         .nav-link:hover { color: white; }
+
+        /* --- MINI MUSIC PLAYER --- */
+        .music-player-container {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(10, 10, 10, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 10px;
+            border-radius: 50px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 50px; /* Collapsed width */
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+
+        /* RGB Border effect for player */
+        .music-player-container::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            z-index: -1;
+            border-radius: 50px;
+            padding: 1px;
+            background: var(--rgb-gradient);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0.5;
+        }
+
+        .music-player-container.expanded {
+            width: 300px; /* Expanded width */
+            border-radius: 20px;
+            padding: 15px 20px;
+        }
+
+        .toggle-btn {
+            min-width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            cursor: none;
+        }
+
+        .player-content {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+        }
+
+        .music-player-container.expanded .player-content {
+            opacity: 1;
+            transition-delay: 0.2s;
+        }
+
+        .song-info {
+            font-size: 0.85rem;
+            color: #00ffd5;
+            margin-bottom: 5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .controls-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .play-pause-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1rem;
+            cursor: none;
+        }
+
+        .volume-slider {
+            width: 100%;
+            height: 4px;
+            -webkit-appearance: none;
+            background: #333;
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: white;
+            cursor: none;
+        }
 
         /* --- BACKGROUND ANIMATION CANVAS --- */
         #bg-canvas {
@@ -94,7 +198,6 @@
             transition: width 0.2s, height 0.2s, border-color 0.2s;
         }
 
-        /* Cursor Hover State: RGB Cycle */
         @keyframes border-rainbow {
             0% { border-color: #ff0000; }
             20% { border-color: #fffb00; }
@@ -107,7 +210,7 @@
         body.hovering .cursor-outline {
             width: 60px; height: 60px;
             background: rgba(255, 255, 255, 0.02);
-            animation: border-rainbow 2s linear infinite; /* RGB ANIMATION */
+            animation: border-rainbow 2s linear infinite;
         }
 
         /* --- LAYOUT UTILS --- */
@@ -118,7 +221,6 @@
         }
 
         section {
-            /* Tighter spacing */
             padding: 50px 0; 
             min-height: auto;
             position: relative;
@@ -143,7 +245,6 @@
             animation: rgb-flow 3s linear infinite;
         }
 
-        /* SMOOTH REVEAL ANIMATION */
         .reveal {
             opacity: 0;
             transform: translateY(40px) scale(0.98);
@@ -170,8 +271,8 @@
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 5px;
-            color: white; /* Reverted to white */
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.6), 0 0 40px rgba(255, 255, 255, 0.3); /* Glow */
+            color: white;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.6), 0 0 40px rgba(255, 255, 255, 0.3);
             margin-bottom: 10px;
         }
 
@@ -200,12 +301,8 @@
             padding: 25px;
             border-radius: 12px;
             border: 1px solid #222;
-            transition: transform 0.3s ease;
         }
         
-        /* Parallax-like hover effect handled in JS, but basic hover here */
-        .skill-box:hover { border-color: #333; }
-
         .skill-box h3 {
             font-size: 1.1rem; color: white; border-bottom: 1px solid #333;
             padding-bottom: 10px; margin-bottom: 15px; text-transform: uppercase;
@@ -214,7 +311,6 @@
         .skill-list li {
             list-style: none; margin-bottom: 8px; color: #aaa; display: flex; align-items: flex-start;
         }
-        .skill-list li strong { color: #ddd; margin-right: 5px; }
         
         .good::before { content: '✓'; color: #48ff00; margin-right: 10px; }
         .bad::before { content: '✕'; color: #ff0000; margin-right: 10px; }
@@ -245,20 +341,16 @@
             display: block;
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
-
         .work-card:hover { transform: translateY(-5px); }
 
-        /* RGB Stroke (No fill) */
         .work-card-border {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             border-radius: 12px;
-            padding: 2px; /* Stroke width */
+            padding: 2px;
             background: var(--rgb-gradient);
             background-size: 300%;
-            -webkit-mask: 
-               linear-gradient(#fff 0 0) content-box, 
-               linear-gradient(#fff 0 0);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
             opacity: 0;
@@ -270,28 +362,16 @@
         .work-card:hover .work-card-border { opacity: 1; }
 
         .work-image-container {
-            width: 100%;
-            height: 180px;
-            position: relative;
-            background: #000;
+            width: 100%; height: 180px; position: relative; background: #000;
         }
-
         .work-image {
             width: 100%; height: 100%; object-fit: cover; opacity: 0.8; transition: opacity 0.3s;
         }
         .work-card:hover .work-image { opacity: 1; }
-
-        /* Play icon overlay */
         .play-overlay {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 2rem;
-            color: white;
-            opacity: 0.7;
-            text-shadow: 0 0 10px black;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 2rem; color: white; opacity: 0.7; text-shadow: 0 0 10px black;
         }
-
         .work-info { padding: 20px; }
         .work-title { color: white; margin-bottom: 5px; font-weight: bold; }
         .work-desc { font-size: 0.9rem; color: #888; }
@@ -323,30 +403,6 @@
 
         footer { text-align: center; padding: 40px; color: #444; font-size: 0.8rem; margin-top: 40px; border-top: 1px solid #111; }
 
-        .music-toggle {
-    position: fixed;
-    bottom: 30px;
-    left: 30px;
-    background: rgba(0, 0, 0, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-    padding: 10px 20px;
-    border-radius: 30px;
-    z-index: 1000;
-    font-family: inherit;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.3s;
-    backdrop-filter: blur(5px);
-}
-
-.music-toggle:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: #00ffd5;
-    box-shadow: 0 0 15px rgba(0, 255, 213, 0.2);
-}
-
     </style>
 </head>
 <body>
@@ -361,26 +417,30 @@
         </ul>
     </nav>
 
+    <!-- MUSIC PLAYER -->
+    <div class="music-player-container" id="player-container">
+        <!-- Toggle Icon -->
+        <div class="toggle-btn hover-target" id="player-toggle">🎵</div>
+        
+        <!-- Expanded Content -->
+        <div class="player-content">
+            <div class="song-info" id="current-song-title">Select Play to Start</div>
+            <div class="controls-row">
+                <button class="play-pause-btn hover-target" id="play-btn">▶</button>
+                <input type="range" class="volume-slider hover-target" id="vol-slider" min="0" max="1" step="0.05" value="0.3">
+            </div>
+        </div>
+        <audio id="bg-music"></audio>
+    </div>
+
     <canvas id="bg-canvas"></canvas>
     <div class="cursor-dot" data-cursor-dot></div>
     <div class="cursor-outline" data-cursor-outline></div>
 
     <div class="container">
-        <!-- Hidden Audio Player -->
-<audio id="bg-music" loop>
-    <source src="music.mp3" type="audio/mpeg">
-</audio>
-
-<!-- Music Toggle Button (Fixed to bottom left) -->
-<button id="music-btn" class="music-toggle hover-target">
-    🔇 Play Music
-</button>
-
-        <!-- HERO -->
+        
         <section id="home" class="reveal">
-            <!-- Simple White Glow Title -->
             <h1 class="hero-title">Unceen</h1>
-            
             <div class="hero-bio">
                 <span id="typewriter"></span><span style="animation:blink 1s infinite">|</span>
             </div>
@@ -389,57 +449,41 @@
             </div>
         </section>
 
-        <!-- EXPERTISE -->
         <section id="expertise">
             <div class="reveal">
                 <h2>Expertise</h2>
                 <div class="skills-grid">
-                    
                     <div class="skill-box hover-target">
                         <h3>Capabilities</h3>
                         <ul class="skill-list">
-                            <li class="good"><strong>Can Do:</strong> UI, Gameplay, Front-end (VFX/Anim), Combat Systems, Back-end, Optimization, NPC/AI.</li>
+                            <li class="good"><strong>Can Do:</strong> UI, Gameplay, Front-end (VFX/Anim), Combat Systems, Back-end Optimization, NPC/AI.</li>
                             <li class="meh"><strong>Decent At:</strong> Advanced Movement (Complex sliding, wallruns).</li>
                             <li class="bad"><strong>Cannot Do:</strong> Vehicles, Guns, Advanced Physics & CFrames.</li>
                         </ul>
                     </div>
-
                     <div class="skill-box hover-target">
                         <h3>Concepts & Tech</h3>
                         <div class="tags-container" style="margin-bottom: 20px;">
-                            <span class="tech-tag">OOP</span>
-                            <span class="tech-tag">SSA</span>
-                            <span class="tech-tag">Knit</span>
-                            <span class="tech-tag">Rojo</span>
-                            <span class="tech-tag">GitHub</span>
-                            <span class="tech-tag">Modular Systems</span>
+                            <span class="tech-tag">OOP</span> <span class="tech-tag">SSA</span> <span class="tech-tag">Knit</span>
+                            <span class="tech-tag">Rojo</span> <span class="tech-tag">GitHub</span> <span class="tech-tag">Modular Systems</span>
                         </div>
-
                         <h3>Libraries</h3>
                         <div class="tags-container">
-                            <span class="tech-tag">Fusion</span>
-                            <span class="tech-tag">Signal</span>
-                            <span class="tech-tag">Maid/Trove</span>
-                            <span class="tech-tag">Spring</span>
-                            <span class="tech-tag">Bezier</span>
+                            <span class="tech-tag">Fusion</span> <span class="tech-tag">Signal</span> <span class="tech-tag">Maid/Trove</span>
+                            <span class="tech-tag">Spring</span> <span class="tech-tag">Bezier</span>
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>
 
-        <!-- WORK -->
         <section id="work">
             <div class="reveal">
                 <h2>Selected Works</h2>
-                <div class="gallery-grid" id="gallery-container">
-                    <!-- JS Injected -->
-                </div>
+                <div class="gallery-grid" id="gallery-container"></div>
             </div>
         </section>
 
-        <!-- RATES -->
         <section id="rates">
             <div class="reveal">
                 <h2>Payment</h2>
@@ -456,11 +500,10 @@
                         <h3 style="color: #4dff88;">USD</h3>
                         <ul class="rate-options">
                             <li>PayPal (F&F Only)</li>
-                            <li>Per-task preferred</li>
+                            <li>50% Upfront Required</li>
                         </ul>
                     </div>
                 </div>
-
                 <div class="terms-box">
                     <strong>⚠️ Important Terms</strong>
                     I do <u>NOT</u> accept percentage payment unless accompanied by USD/Robux.<br>
@@ -469,54 +512,38 @@
             </div>
         </section>
 
-        <!-- CONTACT -->
         <section id="contact">
             <div class="reveal">
                 <h2>Contact</h2>
-                <div class="contact-buttons" id="socials-container">
-                    <!-- JS Injected -->
-                </div>
+                <div class="contact-buttons" id="socials-container"></div>
             </div>
         </section>
 
-        <footer>
-            &copy; 2025 Unceen.
-        </footer>
+        <footer>&copy; 2025 Unceen.</footer>
     </div>
 
     <script>
-        /* --- CONFIGURATION --- */
+        /* 
+        ================================================================
+           CONFIGURATION AREA
+        ================================================================
+        */
+        
+        // !!! IMPORTANT !!!
+        // You MUST add the EXACT filenames of the songs in your "Music" folder here:
+        const MUSIC_PLAYLIST = [
+            "Toccatina.mp3",
+            "Gaspard.mp3",
+            "InThePool.mp3"
+            // Add more files here...
+        ];
+
         const PORTFOLIO_DATA = [
-            {
-                title: "Combat System",
-                url: "https://youtu.be/zw4I74cDuNI",
-                videoID: "zw4I74cDuNI", 
-                description: "Parry-based server authoritative combat system."
-            },
-            {
-                title: "Fusion Menu",
-                url: "https://youtu.be/ksYDLi8paYQ",
-                videoID: "ksYDLi8paYQ", 
-                description: "Main menu UI made using the Fusion library."
-            },
-            {
-                title: "Advanced Fusion Menu",
-                url: "https://youtu.be/8-i408PonWo",
-                videoID: "8-i408PonWo", 
-                description: "Sophisticated main menu created using Fusion."
-            },
-            {
-                title: "Inventory System",
-                url: "https://youtu.be/g9lmGlWRscg",
-                videoID: "g9lmGlWRscg", 
-                description: "Front-end and Back-end inventory management."
-            },
-            {
-                title: "Environment System",
-                url: "https://youtu.be/IwRPR8Wrq5k",
-                videoID: "IwRPR8Wrq5k", 
-                description: "Basic environmental scripting."
-            }
+            { title: "Combat System", url: "https://youtu.be/zw4I74cDuNI", videoID: "zw4I74cDuNI", description: "Parry-based server authoritative combat system." },
+            { title: "Fusion Menu", url: "https://youtu.be/ksYDLi8paYQ", videoID: "ksYDLi8paYQ", description: "Main menu UI made using the Fusion library." },
+            { title: "Advanced Fusion Menu", url: "https://youtu.be/8-i408PonWo", videoID: "8-i408PonWo", description: "Sophisticated main menu created using Fusion." },
+            { title: "Inventory System", url: "https://youtu.be/g9lmGlWRscg", videoID: "g9lmGlWRscg", description: "Front-end and Back-end inventory management." },
+            { title: "Environment System", url: "https://youtu.be/IwRPR8Wrq5k", videoID: "IwRPR8Wrq5k", description: "Basic environmental scripting." }
         ];
 
         const SOCIAL_LINKS = [
@@ -525,163 +552,137 @@
             { name: "Roblox Profile", url: "https://www.roblox.com/users/2790463249/profile" }
         ];
 
-        // --- 1. RENDER WORK (Youtube Thumbs) ---
+        /* ================================================================ */
+
+        // --- MUSIC PLAYER LOGIC ---
+        const playerContainer = document.getElementById('player-container');
+        const playerToggle = document.getElementById('player-toggle');
+        const audio = document.getElementById('bg-music');
+        const playBtn = document.getElementById('play-btn');
+        const songTitle = document.getElementById('current-song-title');
+        const volSlider = document.getElementById('vol-slider');
+
+        let isPlaying = false;
+        audio.volume = 0.3; // Default volume
+
+        // Toggle Expand/Collapse
+        playerToggle.addEventListener('click', () => {
+            playerContainer.classList.toggle('expanded');
+        });
+
+        // Play Random Song
+        function playRandomSong() {
+            if(MUSIC_PLAYLIST.length === 0) {
+                songTitle.innerText = "No songs in list!";
+                return;
+            }
+            const randomIndex = Math.floor(Math.random() * MUSIC_PLAYLIST.length);
+            const songName = MUSIC_PLAYLIST[randomIndex];
+            
+            audio.src = `Music/${songName}`;
+            audio.play().then(() => {
+                isPlaying = true;
+                playBtn.innerText = "⏸";
+                songTitle.innerText = songName;
+            }).catch(e => {
+                console.error("Audio error:", e);
+                songTitle.innerText = "Error playing audio";
+            });
+        }
+
+        // Play Button Click
+        playBtn.addEventListener('click', () => {
+            if (!audio.src || audio.src === window.location.href) {
+                // First time click, start random
+                playRandomSong();
+            } else if (isPlaying) {
+                audio.pause();
+                isPlaying = false;
+                playBtn.innerText = "▶";
+            } else {
+                audio.play();
+                isPlaying = true;
+                playBtn.innerText = "⏸";
+            }
+        });
+
+        // When song ends, play next random
+        audio.addEventListener('ended', playRandomSong);
+
+        // Volume Control
+        volSlider.addEventListener('input', (e) => {
+            audio.volume = e.target.value;
+        });
+
+
+        // --- PORTFOLIO & SOCIALS RENDERING ---
         const gallery = document.getElementById('gallery-container');
         PORTFOLIO_DATA.forEach(item => {
             const card = document.createElement('a');
-            card.href = item.url;
-            card.target = "_blank"; // Open in new tab
-            card.className = 'work-card hover-target';
-            
-            // Youtube Thumbnail URL
+            card.href = item.url; card.target = "_blank"; card.className = 'work-card hover-target';
             const thumbUrl = `https://img.youtube.com/vi/${item.videoID}/maxresdefault.jpg`;
-
             card.innerHTML = `
                 <div class="work-card-border"></div>
-                <div class="work-image-container">
-                    <img src="${thumbUrl}" alt="${item.title}" class="work-image">
-                    <div class="play-overlay">▶</div>
-                </div>
-                <div class="work-info">
-                    <div class="work-title">${item.title}</div>
-                    <div class="work-desc">${item.description}</div>
-                </div>
+                <div class="work-image-container"><img src="${thumbUrl}" alt="${item.title}" class="work-image"><div class="play-overlay">▶</div></div>
+                <div class="work-info"><div class="work-title">${item.title}</div><div class="work-desc">${item.description}</div></div>
             `;
             gallery.appendChild(card);
         });
 
-        // --- 2. RENDER SOCIALS ---
         const socials = document.getElementById('socials-container');
         SOCIAL_LINKS.forEach(link => {
             const btn = document.createElement('a');
-            btn.href = link.url;
-            btn.className = 'social-btn hover-target';
-            btn.target = "_blank";
-            btn.innerText = link.name;
+            btn.href = link.url; btn.className = 'social-btn hover-target'; btn.target = "_blank"; btn.innerText = link.name;
             socials.appendChild(btn);
         });
 
-        // --- 3. SCROLL REVEAL & PARALLAX ---
+        // --- ANIMATIONS & CURSOR ---
         const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if(entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                }
-            });
+            entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('active'); });
         }, { threshold: 0.1 });
-
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-        // Parallax effect on scroll
         window.addEventListener('scroll', () => {
             const scrolled = window.scrollY;
             const hero = document.querySelector('#home');
-            if (hero) {
-                // Move hero text slightly slower than scroll
-                hero.style.transform = `translateY(${scrolled * 0.3}px)`;
-                hero.style.opacity = 1 - (scrolled / 500);
-            }
+            if (hero) { hero.style.transform = `translateY(${scrolled * 0.3}px)`; hero.style.opacity = 1 - (scrolled / 500); }
         });
 
-        // --- 4. CUSTOM CURSOR ---
         const dot = document.querySelector('[data-cursor-dot]');
         const outline = document.querySelector('[data-cursor-outline]');
-        
         window.addEventListener("mousemove", (e) => {
-            const x = e.clientX; 
-            const y = e.clientY;
-            
-            dot.style.left = `${x}px`; 
-            dot.style.top = `${y}px`;
-            
-            outline.animate({ 
-                left: `${x}px`, 
-                top: `${y}px` 
-            }, { duration: 400, fill: "forwards" });
+            dot.style.left = `${e.clientX}px`; dot.style.top = `${e.clientY}px`;
+            outline.animate({ left: `${e.clientX}px`, top: `${e.clientY}px` }, { duration: 400, fill: "forwards" });
         });
+        document.body.addEventListener('mouseover', (e) => { if(e.target.closest('.hover-target')) document.body.classList.add('hovering'); });
+        document.body.addEventListener('mouseout', (e) => { if(e.target.closest('.hover-target')) document.body.classList.remove('hovering'); });
 
-        // Hover handling
-        document.body.addEventListener('mouseover', (e) => {
-            if(e.target.closest('.hover-target')) {
-                document.body.classList.add('hovering');
-            }
-        });
-        document.body.addEventListener('mouseout', (e) => {
-            if(e.target.closest('.hover-target')) {
-                document.body.classList.remove('hovering');
-            }
-        });
-
-        // --- 5. TYPEWRITER ---
         const txt = "Professional Scripter. Systems, UI, & Back-end.";
         let i = 0;
         function type() {
-            if(i < txt.length) {
-                document.getElementById('typewriter').innerHTML += txt.charAt(i);
-                i++; setTimeout(type, 30);
-            }
+            if(i < txt.length) { document.getElementById('typewriter').innerHTML += txt.charAt(i); i++; setTimeout(type, 30); }
         }
         setTimeout(type, 800);
 
-        // --- 6. BACKGROUND ANIMATION ---
+        // --- BG CANVAS ---
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let w, h;
-        
-        function resize() { 
-            w = canvas.width = window.innerWidth; 
-            h = canvas.height = window.innerHeight; 
-        }
-        window.addEventListener('resize', resize); 
-        resize();
-        
-        const cols = Math.floor(w / 20);
-        const drops = Array(cols).fill(1);
-        
+        function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
+        const cols = Math.floor(w / 20); const drops = Array(cols).fill(1);
         function draw() {
-            ctx.fillStyle = 'rgba(5,5,5,0.05)'; // Fade effect
-            ctx.fillRect(0,0,w,h);
-            
-            ctx.font = '15px monospace';
-            
+            ctx.fillStyle = 'rgba(5,5,5,0.05)'; ctx.fillRect(0,0,w,h); ctx.font = '15px monospace';
             drops.forEach((y, index) => {
                 const char = String.fromCharCode(0x30A0 + Math.random() * 96);
-                
-                // Random RGB-themed colors
                 const rand = Math.random();
-                if(rand > 0.6) ctx.fillStyle = '#00ffd5'; // Cyan
-                else if(rand > 0.3) ctx.fillStyle = '#48ff00'; // Green
-                else ctx.fillStyle = '#7a00ff'; // Purple
-                
+                ctx.fillStyle = rand > 0.6 ? '#00ffd5' : (rand > 0.3 ? '#48ff00' : '#7a00ff');
                 ctx.fillText(char, index*20, y*20);
-                
                 if(y*20 > h && Math.random() > 0.975) drops[index] = 0;
                 drops[index]++;
             });
         }
         setInterval(draw, 33);
-
-        // --- BACKGROUND MUSIC LOGIC ---
-const music = document.getElementById('bg-music');
-const musicBtn = document.getElementById('music-btn');
-let isPlaying = false;
-
-// Set volume lower so it's not annoying
-music.volume = 0.3; 
-
-musicBtn.addEventListener('click', () => {
-    if (!isPlaying) {
-        music.play().then(() => {
-            musicBtn.innerText = "🔊 Stop Music";
-            isPlaying = true;
-        }).catch(err => console.log("Audio play failed:", err));
-    } else {
-        music.pause();
-        musicBtn.innerText = "🔇 Play Music";
-        isPlaying = false;
-    }
-});
-
     </script>
 </body>
 </html>
