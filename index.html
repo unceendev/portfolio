@@ -1,0 +1,465 @@
+Here is a complete, single-file solution containing the HTML, CSS, and JavaScript. I have designed this to be "drag and drop" ready—save it as an `index.html` file and open it in your browser.
+
+To make it **easy to add work**, look for the `PORTFOLIO_DATA` section in the JavaScript at the bottom of the code. You simply add new items to that list, and the site updates automatically.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unceen | Portfolio</title>
+    <style>
+        /* --- CORE VARIABLES & RESET --- */
+        :root {
+            --bg-color: #050505;
+            --text-color: #ffffff;
+            --accent-glow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.3);
+            --rgb-gradient: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none; /* Hide default cursor */
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- RGB ANIMATIONS --- */
+        @keyframes rgb-flow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* --- CUSTOM CURSOR --- */
+        .cursor-dot,
+        .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: white;
+        }
+
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+
+        /* Hover effect for cursor */
+        body.hovering .cursor-outline {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: white;
+        }
+
+        /* --- LAYOUT UTILITIES --- */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        section {
+            min-height: 80vh; /* Gives each section breathing room */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 80px 0;
+            position: relative;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        /* RGB Underline for Headers */
+        h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            width: 100%;
+            height: 3px;
+            background: var(--rgb-gradient);
+            background-size: 400%;
+            animation: rgb-flow 10s linear infinite;
+        }
+
+        /* --- HEADER SECTION --- */
+        #home {
+            text-align: center;
+            height: 100vh;
+        }
+
+        .hero-title {
+            font-size: 5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            background: var(--rgb-gradient);
+            background-size: 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: rgb-flow 5s linear infinite;
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.1));
+        }
+
+        .hero-bio {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 20px auto;
+            color: #ccc;
+        }
+
+        /* --- WORK SECTION --- */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .work-card {
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .work-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            border-color: #555;
+        }
+
+        /* Animated border using pseudo-element */
+        .work-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 2px;
+            background: var(--rgb-gradient);
+            background-size: 200%;
+            opacity: 0;
+            transition: opacity 0.3s;
+            animation: rgb-flow 2s linear infinite;
+        }
+        .work-card:hover::before {
+            opacity: 1;
+        }
+
+        .work-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background-color: #111; /* Placeholder color if image fails */
+        }
+
+        .work-info {
+            padding: 20px;
+        }
+
+        .work-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        .work-desc {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        /* --- RATES SECTION --- */
+        .rates-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .rate-card {
+            flex: 1;
+            min-width: 300px;
+            max-width: 450px;
+            background: rgba(15, 15, 15, 0.9);
+            border: 1px solid #333;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rate-card h3 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .rate-options {
+            text-align: left;
+            margin-top: 20px;
+            list-style: none;
+        }
+
+        .rate-options li {
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+            color: #bbb;
+        }
+
+        .rate-options li:last-child {
+            border-bottom: none;
+        }
+
+        .usd-glow { box-shadow: 0 0 15px rgba(0, 255, 0, 0.1); }
+        .robux-glow { box-shadow: 0 0 15px rgba(255, 0, 0, 0.1); }
+
+        /* --- CONTACT SECTION --- */
+        .contact-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .social-btn {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            text-decoration: none;
+            color: white;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .social-btn:hover {
+            background: #000;
+            border-color: white;
+            box-shadow: 0 0 15px var(--text-color);
+            transform: scale(1.05);
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #444;
+            font-size: 0.8rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- CUSTOM CURSOR ELEMENTS -->
+    <div class="cursor-dot" data-cursor-dot></div>
+    <div class="cursor-outline" data-cursor-outline></div>
+
+    <div class="container">
+        
+        <!-- HEADER / BIO -->
+        <section id="home">
+            <h1 class="hero-title">Unceen</h1>
+            <p class="hero-bio">
+                Professional Scripter & Developer.<br>
+                Specializing in robust systems, clean UI integration, and high-performance code.
+            </p>
+            <div style="margin-top: 30px; font-size: 2rem; animation: float 3s ease-in-out infinite;">
+                ↓
+            </div>
+        </section>
+
+        <!-- WORK GALLERY -->
+        <section id="work">
+            <h2>Selected Works</h2>
+            <div class="gallery-grid" id="gallery-container">
+                <!-- Javascript will inject items here -->
+            </div>
+        </section>
+
+        <!-- RATES / PAYMENT -->
+        <section id="rates">
+            <h2>Payment & Rates</h2>
+            <div class="rates-container">
+                
+                <!-- Robux Card -->
+                <div class="rate-card robux-glow">
+                    <h3 style="color: #ff4d4d;">Robux</h3>
+                    <ul class="rate-options">
+                        <li>✅ <strong>Group Funds:</strong> Preferred method.</li>
+                        <li>💳 <strong>Giftcards:</strong> Official Roblox cards only.</li>
+                        <li>🎫 <strong>Gamepass:</strong> Tax must be covered (30%).</li>
+                    </ul>
+                </div>
+
+                <!-- USD Card -->
+                <div class="rate-card usd-glow">
+                    <h3 style="color: #4dff88;">USD</h3>
+                    <ul class="rate-options">
+                        <li>🅿️ <strong>PayPal:</strong> Friends & Family only.</li>
+                        <li>Full upfront payment or 50% deposit required for large projects.</li>
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- CONTACT -->
+        <section id="contact">
+            <h2>Get In Touch</h2>
+            <div class="contact-buttons" id="socials-container">
+                <!-- Javascript will inject buttons here -->
+            </div>
+        </section>
+
+        <footer>
+            © 2024 Unceen. All rights reserved.
+        </footer>
+    </div>
+
+    <script>
+        /* 
+        ========================================
+           USER CONFIGURATION AREA
+           Edit these lists to update your site!
+        ========================================
+        */
+
+        const PORTFOLIO_DATA = [
+            {
+                title: "Combat System V2",
+                image: "https://via.placeholder.com/400x250/111/fff?text=Combat+System", 
+                description: "A fully server-authoritative hitbox system with stun and combo mechanics."
+            },
+            {
+                title: "Inventory UI",
+                image: "https://via.placeholder.com/400x250/111/fff?text=Inventory+UI", 
+                description: "Sleek, grid-based inventory with drag-and-drop functionality."
+            },
+            {
+                title: "Datastore Framework",
+                image: "https://via.placeholder.com/400x250/111/fff?text=Data+Handler", 
+                description: "Robust data saving with session locking and auto-backups."
+            },
+            {
+                title: "Shop Interface",
+                image: "https://via.placeholder.com/400x250/111/fff?text=Shop+System", 
+                description: "Dynamic shop populated via configuration tables."
+            }
+        ];
+
+        const SOCIAL_LINKS = [
+            { name: "Discord", url: "https://discord.com" },
+            { name: "Twitter / X", url: "https://twitter.com" },
+            { name: "Roblox Profile", url: "https://roblox.com" }
+        ];
+
+        /* ======================================== */
+
+        // --- 1. RENDER PORTFOLIO ---
+        const galleryContainer = document.getElementById('gallery-container');
+
+        PORTFOLIO_DATA.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'work-card hover-target'; // 'hover-target' for cursor interaction
+            
+            card.innerHTML = `
+                <img src="${item.image}" alt="${item.title}" class="work-image">
+                <div class="work-info">
+                    <div class="work-title">${item.title}</div>
+                    <div class="work-desc">${item.description}</div>
+                </div>
+            `;
+            galleryContainer.appendChild(card);
+        });
+
+        // --- 2. RENDER SOCIALS ---
+        const socialsContainer = document.getElementById('socials-container');
+
+        SOCIAL_LINKS.forEach(link => {
+            const btn = document.createElement('a');
+            btn.href = link.url;
+            btn.className = 'social-btn hover-target';
+            btn.target = "_blank"; // Opens in new tab
+            btn.innerText = link.name;
+            socialsContainer.appendChild(btn);
+        });
+
+        // --- 3. CUSTOM CURSOR LOGIC ---
+        const cursorDot = document.querySelector('[data-cursor-dot]');
+        const cursorOutline = document.querySelector('[data-cursor-outline]');
+
+        window.addEventListener("mousemove", function (e) {
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            // Dot follows instantly
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+
+            // Outline follows with slight delay (animation handled by CSS transition)
+            cursorOutline.style.left = `${posX}px`;
+            cursorOutline.style.top = `${posY}px`;
+            
+            /* ADDED: Trail effect logic if you wanted JS animation, 
+               but CSS transition on .cursor-outline handles the 'smooth' feel perfectly. */
+        });
+
+        // Add hover effect for interactive elements
+        // We use event delegation to catch current and future elements
+        document.body.addEventListener('mouseover', (e) => {
+            if (e.target.closest('.hover-target') || e.target.tagName === 'A' || e.target.tagName === 'BUTTON') {
+                document.body.classList.add('hovering');
+            }
+        });
+
+        document.body.addEventListener('mouseout', (e) => {
+            if (e.target.closest('.hover-target') || e.target.tagName === 'A' || e.target.tagName === 'BUTTON') {
+                document.body.classList.remove('hovering');
+            }
+        });
+
+    </script>
+</body>
+</html>
+```
