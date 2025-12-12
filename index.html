@@ -32,6 +32,48 @@
             padding-top: var(--nav-height);
         }
 
+        /* --- CLICK TO ENTER OVERLAY --- */
+        #enter-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #000;
+            z-index: 99999; /* Topmost layer */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: opacity 0.8s ease, visibility 0.8s;
+            cursor: pointer; /* Force pointer on overlay for clarity */
+        }
+
+        #enter-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .enter-text {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            animation: pulse-text 2s infinite;
+        }
+
+        .enter-sub {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 10px;
+            letter-spacing: 2px;
+        }
+
+        @keyframes pulse-text {
+            0%, 100% { opacity: 0.5; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
+            50% { opacity: 1; text-shadow: 0 0 20px rgba(255,255,255,0.8); }
+        }
+
         /* --- NAVBAR --- */
         .navbar {
             position: fixed;
@@ -85,7 +127,6 @@
             box-shadow: 0 0 15px rgba(0,0,0,0.5);
         }
 
-        /* RGB Border effect for player */
         .music-player-container::before {
             content: '';
             position: absolute;
@@ -407,6 +448,12 @@
 </head>
 <body>
 
+    <!-- CLICK TO ENTER OVERLAY -->
+    <div id="enter-overlay">
+        <div class="enter-text">Initialize System</div>
+        <div class="enter-sub">Click anywhere to start</div>
+    </div>
+
     <nav class="navbar">
         <ul class="nav-links">
             <li><a href="#home" class="nav-link hover-target">Home</a></li>
@@ -529,13 +576,11 @@
         ================================================================
         */
         
-        // !!! IMPORTANT !!!
-        // You MUST add the EXACT filenames of the songs in your "Music" folder here:
+        // Playlist filenames - Assumes files are in a "Music" folder
         const MUSIC_PLAYLIST = [
-            "Toccatina.mp3",
             "Gaspard.mp3",
+            "Toccatina.mp3",
             "InThePool.mp3"
-            // Add more files here...
         ];
 
         const PORTFOLIO_DATA = [
@@ -561,9 +606,16 @@
         const playBtn = document.getElementById('play-btn');
         const songTitle = document.getElementById('current-song-title');
         const volSlider = document.getElementById('vol-slider');
+        const overlay = document.getElementById('enter-overlay');
 
         let isPlaying = false;
         audio.volume = 0.3; // Default volume
+
+        // --- 1. OVERLAY CLICK HANDLER ---
+        overlay.addEventListener('click', () => {
+            overlay.classList.add('hidden'); // Hide overlay
+            playRandomSong(); // Start music
+        });
 
         // Toggle Expand/Collapse
         playerToggle.addEventListener('click', () => {
@@ -580,20 +632,22 @@
             const songName = MUSIC_PLAYLIST[randomIndex];
             
             audio.src = `Music/${songName}`;
+            
+            // Promise handling for play (catches potential autoplay blocks)
             audio.play().then(() => {
                 isPlaying = true;
                 playBtn.innerText = "⏸";
-                songTitle.innerText = songName;
+                songTitle.innerText = songName.replace('.mp3', ''); // Clean name
+                playerContainer.classList.add('expanded'); // Auto-expand on play
+                setTimeout(() => playerContainer.classList.remove('expanded'), 3000); // Collapse after 3s
             }).catch(e => {
-                console.error("Audio error:", e);
-                songTitle.innerText = "Error playing audio";
+                console.warn("Autoplay blocked, waiting for interaction.");
             });
         }
 
-        // Play Button Click
+        // Play Button Click (Manual Control)
         playBtn.addEventListener('click', () => {
             if (!audio.src || audio.src === window.location.href) {
-                // First time click, start random
                 playRandomSong();
             } else if (isPlaying) {
                 audio.pause();
@@ -654,8 +708,8 @@
             dot.style.left = `${e.clientX}px`; dot.style.top = `${e.clientY}px`;
             outline.animate({ left: `${e.clientX}px`, top: `${e.clientY}px` }, { duration: 400, fill: "forwards" });
         });
-        document.body.addEventListener('mouseover', (e) => { if(e.target.closest('.hover-target')) document.body.classList.add('hovering'); });
-        document.body.addEventListener('mouseout', (e) => { if(e.target.closest('.hover-target')) document.body.classList.remove('hovering'); });
+        document.body.addEventListener('mouseover', (e) => { if(e.target.closest('.hover-target') || e.target.id === 'enter-overlay') document.body.classList.add('hovering'); });
+        document.body.addEventListener('mouseout', (e) => { if(e.target.closest('.hover-target') || e.target.id === 'enter-overlay') document.body.classList.remove('hovering'); });
 
         const txt = "Professional Scripter. Systems, UI, & Back-end.";
         let i = 0;
