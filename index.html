@@ -323,6 +323,30 @@
 
         footer { text-align: center; padding: 40px; color: #444; font-size: 0.8rem; margin-top: 40px; border-top: 1px solid #111; }
 
+        .music-toggle {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 30px;
+    z-index: 1000;
+    font-family: inherit;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+    backdrop-filter: blur(5px);
+}
+
+.music-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #00ffd5;
+    box-shadow: 0 0 15px rgba(0, 255, 213, 0.2);
+}
+
     </style>
 </head>
 <body>
@@ -342,7 +366,16 @@
     <div class="cursor-outline" data-cursor-outline></div>
 
     <div class="container">
-        
+        <!-- Hidden Audio Player -->
+<audio id="bg-music" loop>
+    <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Music Toggle Button (Fixed to bottom left) -->
+<button id="music-btn" class="music-toggle hover-target">
+    🔇 Play Music
+</button>
+
         <!-- HERO -->
         <section id="home" class="reveal">
             <!-- Simple White Glow Title -->
@@ -423,7 +456,7 @@
                         <h3 style="color: #4dff88;">USD</h3>
                         <ul class="rate-options">
                             <li>PayPal (F&F Only)</li>
-                            <li>50% Upfront Required</li>
+                            <li>Per-task preferred</li>
                         </ul>
                     </div>
                 </div>
@@ -627,6 +660,28 @@
             });
         }
         setInterval(draw, 33);
+
+        // --- BACKGROUND MUSIC LOGIC ---
+const music = document.getElementById('bg-music');
+const musicBtn = document.getElementById('music-btn');
+let isPlaying = false;
+
+// Set volume lower so it's not annoying
+music.volume = 0.3; 
+
+musicBtn.addEventListener('click', () => {
+    if (!isPlaying) {
+        music.play().then(() => {
+            musicBtn.innerText = "🔊 Stop Music";
+            isPlaying = true;
+        }).catch(err => console.log("Audio play failed:", err));
+    } else {
+        music.pause();
+        musicBtn.innerText = "🔇 Play Music";
+        isPlaying = false;
+    }
+});
+
     </script>
 </body>
 </html>
