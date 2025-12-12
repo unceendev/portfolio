@@ -10,8 +10,9 @@
             --bg-color: #050505;
             --text-color: #ffffff;
             --rgb-gradient: linear-gradient(90deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
-            --card-bg: rgba(20, 20, 20, 0.6);
+            --card-bg: #111;
             --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --nav-height: 60px;
         }
 
         * {
@@ -19,6 +20,7 @@
             padding: 0;
             box-sizing: border-box;
             cursor: none; /* Custom cursor only */
+            scroll-behavior: smooth;
         }
 
         body {
@@ -27,6 +29,59 @@
             font-family: var(--font-main);
             overflow-x: hidden;
             line-height: 1.6;
+            padding-top: var(--nav-height); /* Offset for fixed nav */
+        }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--nav-height);
+            background: rgba(5, 5, 5, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #888;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: white;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: var(--rgb-gradient);
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
         }
 
         /* --- BACKGROUND ANIMATION CANVAS --- */
@@ -37,7 +92,7 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            opacity: 0.3; /* Subtle effect */
+            opacity: 0.3;
         }
 
         /* --- CUSTOM CURSOR --- */
@@ -50,12 +105,7 @@
             pointer-events: none;
         }
 
-        .cursor-dot {
-            width: 8px; height: 8px;
-            background: white;
-            box-shadow: 0 0 10px white;
-        }
-
+        .cursor-dot { width: 8px; height: 8px; background: white; box-shadow: 0 0 10px white; }
         .cursor-outline {
             width: 40px; height: 40px;
             border: 2px solid rgba(255, 255, 255, 0.5);
@@ -63,37 +113,12 @@
         }
 
         body.hovering .cursor-outline {
-            width: 70px; height: 70px;
+            width: 60px; height: 60px;
             background: rgba(255, 255, 255, 0.05);
             border-color: #00ffd5;
-            box-shadow: 0 0 30px rgba(0, 255, 213, 0.2);
         }
 
-        /* --- SCROLL REVEAL ANIMATIONS --- */
-        .reveal {
-            opacity: 0;
-            transform: translateY(50px);
-            transition: all 0.8s ease-out;
-        }
-
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* --- RGB ANIMATIONS --- */
-        @keyframes rgb-flow {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 200% 50%; } /* Faster flow */
-        }
-
-        @keyframes pulse-glow {
-            0% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); }
-            50% { box-shadow: 0 0 25px rgba(255, 255, 255, 0.3); }
-            100% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); }
-        }
-
-        /* --- LAYOUT --- */
+        /* --- LAYOUT UTILS --- */
         .container {
             max-width: 1100px;
             margin: 0 auto;
@@ -101,242 +126,315 @@
         }
 
         section {
-            min-height: 90vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 100px 0;
+            /* Reduced spacing as requested */
+            min-height: auto; 
+            padding: 60px 0; 
+            position: relative;
         }
 
         h2 {
-            font-size: 3rem;
-            margin-bottom: 60px;
+            font-size: 2.5rem;
+            margin-bottom: 40px;
             text-transform: uppercase;
             letter-spacing: 4px;
             display: inline-block;
             position: relative;
         }
 
-        /* Animated Underline */
         h2::after {
             content: '';
             position: absolute;
-            left: 0; bottom: -10px;
-            width: 0%;
-            height: 4px;
+            left: 0; bottom: -5px;
+            width: 100%;
+            height: 3px;
             background: var(--rgb-gradient);
             background-size: 200%;
-            transition: width 1s ease;
             animation: rgb-flow 3s linear infinite;
         }
-        section:hover h2::after, .reveal.active h2::after {
-            width: 100%;
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        @keyframes rgb-flow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
         }
 
-        /* --- HEADER --- */
+        /* --- HERO --- */
+        #home {
+            min-height: 80vh; /* Keep hero slightly larger */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
         .hero-title {
-            font-size: 6rem;
+            font-size: 5rem;
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 5px;
             color: transparent;
-            -webkit-text-stroke: 2px rgba(255,255,255,0.3);
+            -webkit-text-stroke: 2px rgba(255,255,255,0.8);
             position: relative;
+            background: var(--rgb-gradient);
+            background-clip: text;
+            -webkit-background-clip: text;
+            animation: rgb-flow 5s linear infinite;
         }
 
-        /* Double layer for glow effect */
-        .hero-title::before {
-            content: "Unceen";
-            position: absolute;
-            left: 0; top: 0;
-            width: 0%; 
-            height: 100%;
+        .hero-bio { font-size: 1.2rem; color: #ccc; margin-top: 20px; }
+        .hero-exp {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 5px 15px;
+            border: 1px solid #333;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.05);
+            color: #00ffd5;
+            font-weight: bold;
+        }
+
+        /* --- SKILLS & INFO SECTION --- */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .skill-box {
+            background: #111;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #222;
+        }
+
+        .skill-box h3 {
+            font-size: 1.1rem;
             color: white;
-            overflow: hidden;
-            border-right: 4px solid #00ffd5;
-            animation: type-title 3s cubic-bezier(0.1, 0, 0.1, 1) forwards;
-            white-space: nowrap;
-            filter: drop-shadow(0 0 20px rgba(255,255,255,0.8));
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
         }
 
-        @keyframes type-title {
-            0% { width: 0%; }
-            100% { width: 100%; border-right: none; }
+        .skill-list li {
+            list-style: none;
+            margin-bottom: 8px;
+            color: #aaa;
+            display: flex;
+            align-items: flex-start;
+        }
+        .skill-list li::before {
+            content: '•';
+            color: #555;
+            margin-right: 10px;
+        }
+        
+        .good::before { content: '✓'; color: #48ff00; }
+        .bad::before { content: '✕'; color: #ff0000; }
+        .meh::before { content: '~'; color: #ffb700; }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        .hero-bio {
-            font-size: 1.5rem;
+        .tech-tag {
+            background: #1a1a1a;
             color: #ccc;
-            margin-top: 20px;
-            min-height: 1.6em; /* Reserve space for typing */
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            border: 1px solid #333;
+            transition: 0.2s;
+        }
+        .tech-tag:hover {
+            border-color: #00ffd5;
+            color: white;
+            transform: translateY(-2px);
         }
 
-        .cursor-blink {
-            animation: blink 1s infinite;
-        }
-        @keyframes blink { 50% { opacity: 0; } }
-
-        /* --- WORK CARDS (3D Tilt Effect) --- */
+        /* --- WORK CARDS (RGB STROKE) --- */
         .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
         }
 
         .work-card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            overflow: hidden;
+            background: var(--card-bg); /* Opaque black background */
+            border-radius: 12px;
             position: relative;
-            transition: transform 0.1s; /* Fast for tilt effect */
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.1);
+            z-index: 1; /* Ensure content sits above border */
         }
 
-        .work-card:hover {
-            z-index: 10;
-        }
-
-        /* RGB Border Glow */
-        .work-card::before {
-            content: '';
+        /* The container for the border animation */
+        .work-card-border {
             position: absolute;
-            inset: -2px;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            border-radius: 14px; /* Slightly larger radius */
             background: var(--rgb-gradient);
-            z-index: -1;
-            filter: blur(10px);
+            z-index: -1; /* Behind the card */
+            background-size: 300%;
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: opacity 0.3s ease;
             animation: rgb-flow 3s linear infinite;
         }
-        .work-card:hover::before {
-            opacity: 1;
+
+        .work-card:hover .work-card-border {
+            opacity: 1; /* Show stroke on hover */
         }
 
         .work-image {
             width: 100%;
-            height: 220px;
+            height: 180px;
             object-fit: cover;
-            border-bottom: 1px solid #333;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            border-bottom: 1px solid #222;
         }
 
-        .work-info {
-            padding: 25px;
-        }
-
-        .work-title { font-size: 1.5rem; font-weight: bold; color: white; margin-bottom: 10px; }
-        .work-desc { color: #aaa; font-size: 0.95rem; }
+        .work-info { padding: 20px; }
+        .work-title { color: white; margin-bottom: 5px; font-weight: bold; }
+        .work-desc { font-size: 0.9rem; color: #888; }
 
         /* --- RATES --- */
         .rates-container {
             display: flex;
-            gap: 30px;
+            gap: 20px;
             flex-wrap: wrap;
             justify-content: center;
         }
 
         .rate-card {
             flex: 1;
-            min-width: 300px;
-            max-width: 450px;
+            min-width: 280px;
             background: #111;
-            padding: 40px;
-            border-radius: 20px;
-            position: relative;
-            border: 1px solid #333;
-            transition: transform 0.3s, box-shadow 0.3s;
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #222;
+            transition: transform 0.3s;
         }
+        .rate-card:hover { transform: translateY(-5px); border-color: #444; }
 
-        .rate-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-        }
-
-        .robux-glow:hover { border-color: #ff4d4d; box-shadow: 0 0 30px rgba(255, 77, 77, 0.2); }
-        .usd-glow:hover { border-color: #4dff88; box-shadow: 0 0 30px rgba(77, 255, 136, 0.2); }
-
-        .rate-card h3 { font-size: 2.2rem; margin-bottom: 20px; }
+        .rate-card h3 { font-size: 1.8rem; margin-bottom: 15px; }
         .rate-options li {
-            padding: 15px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            color: #bbb;
-            display: flex;
-            align-items: center;
-        }
-        .rate-options li::before {
-            content: '>';
-            margin-right: 10px;
-            color: var(--text-color);
-            font-weight: bold;
+            list-style: none; padding: 8px 0; border-bottom: 1px solid #222; color: #aaa;
         }
 
-        /* --- CONTACT BUTTONS (Magnetic) --- */
-        .contact-buttons {
-            display: flex;
-            gap: 30px;
-            justify-content: center;
-            flex-wrap: wrap;
+        .terms-box {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #ff4d4d;
+            background: rgba(255, 77, 77, 0.05);
+            border-radius: 8px;
+            text-align: center;
+            color: #ffcccc;
+            font-size: 0.9rem;
         }
+        .terms-box strong { color: #ff4d4d; display: block; margin-bottom: 5px; }
 
+        /* --- CONTACT --- */
+        .contact-buttons { display: flex; gap: 20px; justify-content: center; }
         .social-btn {
-            position: relative;
-            padding: 20px 40px;
-            font-size: 1.2rem;
-            text-decoration: none;
+            padding: 15px 30px;
             color: white;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 50px;
-            overflow: hidden;
-            transition: color 0.3s;
+            text-decoration: none;
+            border: 1px solid #333;
+            border-radius: 30px;
+            transition: 0.3s;
             text-transform: uppercase;
-            font-weight: bold;
-            letter-spacing: 1px;
-            z-index: 1;
+            font-size: 0.9rem;
         }
+        .social-btn:hover { background: white; color: black; box-shadow: 0 0 20px rgba(255,255,255,0.3); }
 
-        .social-btn::after {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 0;
-            width: 100%; height: 0%;
-            background: white;
-            z-index: -1;
-            transition: height 0.3s ease;
-        }
-
-        .social-btn:hover { color: black; border-color: white; }
-        .social-btn:hover::after { height: 100%; }
-
-        footer { text-align: center; padding: 50px; color: #555; font-size: 0.8rem; }
+        footer { text-align: center; padding: 40px; color: #444; font-size: 0.8rem; border-top: 1px solid #111; margin-top: 40px; }
 
     </style>
 </head>
 <body>
 
-    <!-- ANIMATED BACKGROUND -->
-    <canvas id="bg-canvas"></canvas>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <ul class="nav-links">
+            <li><a href="#home" class="nav-link hover-target">Home</a></li>
+            <li><a href="#expertise" class="nav-link hover-target">Expertise</a></li>
+            <li><a href="#work" class="nav-link hover-target">Work</a></li>
+            <li><a href="#rates" class="nav-link hover-target">Rates</a></li>
+            <li><a href="#contact" class="nav-link hover-target">Contact</a></li>
+        </ul>
+    </nav>
 
-    <!-- CURSOR -->
+    <canvas id="bg-canvas"></canvas>
     <div class="cursor-dot" data-cursor-dot></div>
     <div class="cursor-outline" data-cursor-outline></div>
 
     <div class="container">
         
-        <!-- HEADER -->
+        <!-- HERO -->
         <section id="home">
-            <h1 class="hero-title">Unceen</h1> <!-- CSS pseudo-element handles animation -->
+            <h1 class="hero-title">Unceen</h1>
             <div class="hero-bio">
-                <span id="typewriter"></span><span class="cursor-blink">|</span>
+                <span id="typewriter"></span><span style="animation:blink 1s infinite">|</span>
+            </div>
+            <div>
+                <span class="hero-exp">5 Years Experience</span>
+            </div>
+        </section>
+
+        <!-- EXPERTISE (NEW) -->
+        <section id="expertise">
+            <div class="reveal">
+                <h2>Expertise</h2>
+                <div class="skills-grid">
+                    
+                    <!-- Column 1: Capabilities -->
+                    <div class="skill-box">
+                        <h3>Capabilities</h3>
+                        <ul class="skill-list">
+                            <li class="good"><strong>Can Do:</strong> UI, Gameplay, Front-end (VFX/Anim), Combat Systems, Back-end Optimization, NPC/AI.</li>
+                            <li class="meh"><strong>Decent At:</strong> Advanced Movement (Complex sliding, wallruns).</li>
+                            <li class="bad"><strong>Cannot Do:</strong> Vehicles, Guns, Advanced Physics & CFrames.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Column 2: Tech Stack -->
+                    <div class="skill-box">
+                        <h3>Concepts & Workflow</h3>
+                        <div class="tags-container" style="margin-bottom: 20px;">
+                            <span class="tech-tag">OOP</span>
+                            <span class="tech-tag">SSA</span>
+                            <span class="tech-tag">Knit</span>
+                            <span class="tech-tag">Rojo</span>
+                            <span class="tech-tag">GitHub</span>
+                            <span class="tech-tag">Modular Systems</span>
+                        </div>
+
+                        <h3>Libraries</h3>
+                        <div class="tags-container">
+                            <span class="tech-tag">Fusion</span>
+                            <span class="tech-tag">Signal</span>
+                            <span class="tech-tag">Maid/Trove</span>
+                            <span class="tech-tag">Spring</span>
+                            <span class="tech-tag">Bezier</span>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </section>
 
         <!-- WORK -->
         <section id="work">
             <div class="reveal">
-                <h2>Projects</h2>
+                <h2>Selected Works</h2>
                 <div class="gallery-grid" id="gallery-container">
-                    <!-- Injected via JS -->
+                    <!-- JS Injected -->
                 </div>
             </div>
         </section>
@@ -344,24 +442,30 @@
         <!-- RATES -->
         <section id="rates">
             <div class="reveal">
-                <h2>Rates</h2>
+                <h2>Payment</h2>
                 <div class="rates-container">
-                    <div class="rate-card robux-glow hover-target">
+                    <div class="rate-card hover-target">
                         <h3 style="color: #ff4d4d;">Robux</h3>
                         <ul class="rate-options">
                             <li>Group Funds (Instant)</li>
-                            <li>Giftcards (Official Only)</li>
+                            <li>Official Giftcards</li>
                             <li>Gamepass (You cover 30% tax)</li>
                         </ul>
                     </div>
-                    <div class="rate-card usd-glow hover-target">
+                    <div class="rate-card hover-target">
                         <h3 style="color: #4dff88;">USD</h3>
                         <ul class="rate-options">
                             <li>PayPal (F&F Only)</li>
                             <li>50% Upfront Required</li>
-                            <li>Hourly or Fixed Price</li>
                         </ul>
                     </div>
+                </div>
+
+                <!-- Terms Box -->
+                <div class="terms-box">
+                    <strong>⚠️ Important Terms</strong>
+                    I do <u>NOT</u> accept percentage payment unless accompanied by USD/Robux.<br>
+                    Robux payments must match DevEx rates ($100 USD = 30,000 R$, NOT 10k).
                 </div>
             </div>
         </section>
@@ -371,60 +475,48 @@
             <div class="reveal">
                 <h2>Contact</h2>
                 <div class="contact-buttons" id="socials-container">
-                    <!-- Injected via JS -->
+                    <!-- JS Injected -->
                 </div>
             </div>
         </section>
 
         <footer>
-            &copy; 2025 Unceen. Built for performance.
+            &copy; 2025 Unceen.
         </footer>
     </div>
 
     <script>
-        /* 
-        ========================================
-           DATA CONFIGURATION
-        ========================================
-        */
         const PORTFOLIO_DATA = [
             {
-                title: "Melee Combat V3",
-                image: "https://via.placeholder.com/600x400/111/fff?text=Combat+Engine", 
-                description: "Server-side hitbox detection with lag compensation and stun states."
+                title: "Combat System V2",
+                image: "https://via.placeholder.com/400x250/151515/333?text=Combat", 
+                description: "Server-authoritative hitbox system with stun."
             },
             {
-                title: "Inventory System",
-                image: "https://via.placeholder.com/600x400/111/fff?text=Inventory+UI", 
-                description: "Modular OOP inventory with stacking, dropping, and trading logic."
+                title: "Inventory UI",
+                image: "https://via.placeholder.com/400x250/151515/333?text=Inventory", 
+                description: "Grid-based inventory with drag-and-drop."
             },
             {
-                title: "Datastore Handler",
-                image: "https://via.placeholder.com/600x400/111/fff?text=Data+Store", 
-                description: "ProfileService wrapper with auto-saving and session locking."
+                title: "Data Handler",
+                image: "https://via.placeholder.com/400x250/151515/333?text=Data", 
+                description: "ProfileService wrapper with auto-backups."
             }
         ];
 
         const SOCIAL_LINKS = [
             { name: "Discord", url: "#" },
-            { name: "Twitter", url: "#" },
+            { name: "Twitter / X", url: "#" },
             { name: "Roblox", url: "#" }
         ];
 
-        const BIO_TEXT = "Professional Lua Scripter. Creating seamless systems and immersive mechanics.";
-
-        /* 
-        ========================================
-           LOGIC & ANIMATION
-        ========================================
-        */
-
-        // 1. POPULATE CONTENT
+        // 1. RENDER WORK
         const gallery = document.getElementById('gallery-container');
         PORTFOLIO_DATA.forEach(item => {
             const card = document.createElement('div');
             card.className = 'work-card hover-target';
             card.innerHTML = `
+                <div class="work-card-border"></div>
                 <img src="${item.image}" alt="${item.title}" class="work-image">
                 <div class="work-info">
                     <div class="work-title">${item.title}</div>
@@ -434,6 +526,7 @@
             gallery.appendChild(card);
         });
 
+        // 2. RENDER SOCIALS
         const socials = document.getElementById('socials-container');
         SOCIAL_LINKS.forEach(link => {
             const btn = document.createElement('a');
@@ -443,126 +536,64 @@
             socials.appendChild(btn);
         });
 
-        // 2. TYPING EFFECT (BIO)
-        let i = 0;
-        const typeWriterElement = document.getElementById('typewriter');
-        function typeWriter() {
-            if (i < BIO_TEXT.length) {
-                typeWriterElement.innerHTML += BIO_TEXT.charAt(i);
-                i++;
-                setTimeout(typeWriter, 50); // Typing speed
-            }
-        }
-        // Start typing after title animation
-        setTimeout(typeWriter, 1500);
-
-        // 3. SCROLL REVEAL (Intersection Observer)
+        // 3. SCROLL REVEAL
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                }
+                if(entry.isIntersecting) entry.target.classList.add('active');
             });
-        }, { threshold: 0.1 });
-
+        }, { threshold: 0.15 });
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-        // 4. CUSTOM CURSOR
+        // 4. CURSOR
         const dot = document.querySelector('[data-cursor-dot]');
         const outline = document.querySelector('[data-cursor-outline]');
-
         window.addEventListener("mousemove", (e) => {
-            const x = e.clientX;
-            const y = e.clientY;
-
-            dot.style.left = `${x}px`;
-            dot.style.top = `${y}px`;
-
-            // Small delay for outline
-            outline.animate({
-                left: `${x}px`,
-                top: `${y}px`
-            }, { duration: 500, fill: "forwards" });
+            const x = e.clientX; const y = e.clientY;
+            dot.style.left = `${x}px`; dot.style.top = `${y}px`;
+            outline.animate({ left: `${x}px`, top: `${y}px` }, { duration: 400, fill: "forwards" });
         });
-
-        // Hover states
         document.body.addEventListener('mouseover', (e) => {
-            if (e.target.closest('.hover-target')) {
-                document.body.classList.add('hovering');
-            }
+            if(e.target.closest('.hover-target')) document.body.classList.add('hovering');
         });
         document.body.addEventListener('mouseout', (e) => {
-            if (e.target.closest('.hover-target')) {
-                document.body.classList.remove('hovering');
-            }
+            if(e.target.closest('.hover-target')) document.body.classList.remove('hovering');
         });
 
-        // 5. DIGITAL RAIN BACKGROUND
+        // 5. TYPING BIO
+        const txt = "Professional Scripter. Systems, UI, & Back-end.";
+        let i = 0;
+        function type() {
+            if(i < txt.length) {
+                document.getElementById('typewriter').innerHTML += txt.charAt(i);
+                i++; setTimeout(type, 40);
+            }
+        }
+        setTimeout(type, 1000);
+
+        // 6. BG ANIMATION
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
+        let w, h;
+        function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
         
-        let width, height;
+        const cols = Math.floor(w / 20);
+        const drops = Array(cols).fill(1);
         
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
-        const columns = Math.floor(width / 20);
-        const drops = [];
-        for(let x=0; x<columns; x++) drops[x] = 1;
-
         function draw() {
-            // Translucent black to create trail effect
-            ctx.fillStyle = 'rgba(5, 5, 5, 0.05)';
-            ctx.fillRect(0, 0, width, height);
-
-            ctx.fillStyle = '#0f0'; // Green text
+            ctx.fillStyle = 'rgba(5,5,5,0.05)';
+            ctx.fillRect(0,0,w,h);
             ctx.font = '15px monospace';
-
-            for(let i=0; i<drops.length; i++) {
-                // Random characters
-                const text = String.fromCharCode(0x30A0 + Math.random() * 96);
-                
-                // Color variation (RGB theme)
-                const colorChoice = Math.random();
-                if(colorChoice > 0.6) ctx.fillStyle = '#00ffd5'; // Cyan
-                else if (colorChoice > 0.3) ctx.fillStyle = '#48ff00'; // Green
-                else ctx.fillStyle = '#7a00ff'; // Purple
-
-                ctx.fillText(text, i*20, drops[i]*20);
-
-                if(drops[i]*20 > height && Math.random() > 0.975)
-                    drops[i] = 0;
-                
+            drops.forEach((y, i) => {
+                const char = String.fromCharCode(0x30A0 + Math.random() * 96);
+                const color = Math.random();
+                ctx.fillStyle = color > 0.6 ? '#00ffd5' : (color > 0.3 ? '#48ff00' : '#7a00ff');
+                ctx.fillText(char, i*20, y*20);
+                if(y*20 > h && Math.random() > 0.975) drops[i] = 0;
                 drops[i]++;
-            }
+            });
         }
         setInterval(draw, 33);
-
-        // 6. 3D TILT EFFECT FOR CARDS
-        document.querySelectorAll('.work-card').forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                
-                const rotateX = ((y - centerY) / centerY) * -10; // Max 10deg rotation
-                const rotateY = ((x - centerX) / centerX) * 10;
-
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
-            });
-
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
-            });
-        });
-
     </script>
 </body>
 </html>
